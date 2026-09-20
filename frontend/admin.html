@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard - Employee Attendance</title>
+
+    <link
+        rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ffc72c'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23101b2d' stroke-width='3'/%3E%3Cpath d='M16 11v5l3 2' fill='none' stroke='%23101b2d' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E"
+    >
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- ==================================================
+         ADMIN LOGIN PAGE
+         ================================================== -->
+
+    <div id="adminLoginPage" class="auth-shell">
+
+        <aside class="auth-aside">
+
+            <svg
+                class="brand-mark"
+                viewBox="0 0 32 32"
+                aria-hidden="true"
+            >
+
+                <circle
+                    cx="16"
+                    cy="16"
+                    r="13"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3"
+                />
+
+                <path
+                    d="M16 9v7l4 3"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+
+            </svg>
+
+
+            <div class="clock-block">
+
+                <div
+                    class="clock"
+                    id="liveClock"
+                    aria-hidden="true"
+                >
+                    --:--
+                </div>
+
+                <p
+                    class="clock-date"
+                    id="liveDate"
+                ></p>
+
+            </div>
+
+        </aside>
+
+
+        <main class="auth-main">
+
+            <div class="login-box">
+
+                <h1>Admin Login</h1>
+
+                <p class="subtitle">
+                    Employee Attendance Management System
+                </p>
+
+
+                <form id="adminLoginForm">
+
+                    <label for="adminUsername">
+                        Username
+                    </label>
+
+                    <input
+                        type="text"
+                        id="adminUsername"
+                        placeholder="Enter admin username"
+                        required
+                    >
+
+
+                    <label for="adminPassword">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="adminPassword"
+                        placeholder="Enter admin password"
+                        required
+                    >
+
+
+                    <button
+                        type="submit"
+                        class="login-submit"
+                    >
+                        Login
+                    </button>
+
+                </form>
+
+
+                <p id="loginMessage"></p>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+
+    <!-- ==================================================
+         ADMIN DASHBOARD
+         ================================================== -->
+
+    <div id="adminDashboard">
+
+
+        <!-- NAVBAR -->
+
+        <header class="topbar navbar">
+
+            <div class="topbar-inner">
+
+                <div class="brand">
+
+                    <svg
+                        class="brand-mark"
+                        viewBox="0 0 32 32"
+                        aria-hidden="true"
+                    >
+
+                        <circle
+                            cx="16"
+                            cy="16"
+                            r="13"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="3"
+                        />
+
+                        <path
+                            d="M16 9v7l4 3"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="3"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                    </svg>
+
+
+                    <h1>
+                        Employee Attendance System
+                    </h1>
+
+                </div>
+
+
+                <button
+                    class="btn btn-on-dark logout-btn"
+                    onclick="adminLogout()"
+                >
+                    Logout
+                </button>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- WELCOME + STATISTICS -->
+
+        <section class="overview">
+
+            <div class="overview-inner">
+
+                <div class="welcome">
+
+                    <h2>
+                        Admin Dashboard
+                    </h2>
+
+                    <p>
+                        Manage employees and monitor attendance.
+                    </p>
+
+                </div>
+
+
+                <div class="stats">
+
+
+                    <!-- TOTAL EMPLOYEES -->
+
+                    <div class="stat-card">
+
+                        <h3>
+                            Total Employees
+                        </h3>
+
+                        <div
+                            class="number"
+                            id="totalEmployees"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <!-- TODAY'S ATTENDANCE -->
+
+                    <div class="stat-card">
+
+                        <h3>
+                            Today's Attendance
+                        </h3>
+
+                        <div
+                            class="number"
+                            id="totalAttendance"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <!-- PRESENT -->
+
+                    <div class="stat-card">
+
+                        <h3>
+                            Present
+                        </h3>
+
+                        <div
+                            class="number"
+                            id="presentRecords"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <!-- LATE -->
+
+                    <div class="stat-card">
+
+                        <h3>
+                            Late
+                        </h3>
+
+                        <div
+                            class="number"
+                            id="lateRecords"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <!-- ABSENT -->
+
+                    <div class="stat-card">
+
+                        <h3>
+                            Absent
+                        </h3>
+
+                        <div
+                            class="number"
+                            id="absentRecords"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <!-- ATTENDANCE RATE -->
+
+                    <div class="stat-card">
+
+                        <h3>
+                            Attendance Rate
+                        </h3>
+
+                        <div
+                            class="number"
+                            id="attendanceRate"
+                        >
+                            0%
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- MAIN CONTENT -->
+
+        <main class="container">
+
+
+            <!-- ==================================================
+                 EMPLOYEE SECTION
+                 ================================================== -->
+
+            <div class="section">
+
+                <div class="section-header">
+
+                    <h2>
+                        All Employees
+                    </h2>
+
+
+                    <div class="controls">
+
+                        <input
+                            type="text"
+                            id="employeeSearch"
+                            placeholder="Search employee..."
+                            oninput="filterEmployees()"
+                        >
+
+
+                        <button
+                            class="btn btn-outline refresh-btn"
+                            onclick="loadAdminData()"
+                        >
+                            Refresh
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    ID
+                                </th>
+
+                                <th>
+                                    Name
+                                </th>
+
+                                <th>
+                                    Email
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody
+                            id="employeeTableBody"
+                        >
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 ATTENDANCE SECTION
+                 ================================================== -->
+
+            <div class="section">
+
+                <div class="section-header">
+
+                    <h2>
+                        Attendance Records
+                    </h2>
+
+
+                    <div class="controls">
+
+                        <input
+                            type="text"
+                            id="attendanceSearch"
+                            placeholder="Search employee ID..."
+                            oninput="filterAttendance()"
+                        >
+
+
+                        <select
+                            id="statusFilter"
+                            onchange="filterAttendance()"
+                        >
+
+                            <option value="all">
+                                All Status
+                            </option>
+
+                            <option value="Present">
+                                Present
+                            </option>
+
+                            <option value="Late">
+                                Late
+                            </option>
+
+                        </select>
+
+
+                        <input
+                            type="date"
+                            id="dateFilter"
+                            onchange="filterAttendance()"
+                        >
+
+
+                        <button
+                            class="btn btn-outline refresh-btn"
+                            onclick="loadAdminData()"
+                        >
+                            Refresh
+                        </button>
+
+
+                        <button
+                            class="btn btn-solid export-btn"
+                            onclick="exportAttendance()"
+                        >
+                            Export CSV
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Attendance ID
+                                </th>
+
+                                <th>
+                                    Employee ID
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Time
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody
+                            id="attendanceTableBody"
+                        >
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+        </main>
+
+    </div>
+
+
+    <script src="clock.js"></script>
+
+
+
+    <!-- ==================================================
+         JAVASCRIPT
+         ================================================== -->
+
+    <script>
+
+
+        // ==================================================
+        // ADMIN CREDENTIALS
+        // ==================================================
+
+        const ADMIN_USERNAME = "admin";
+
+        const ADMIN_PASSWORD = "admin123";
+
+
+
+        // ==================================================
+        // DATA STORAGE
+        // ==================================================
+
+        let employees = [];
+
+        let attendanceRecords = [];
+
+
+
+        // ==================================================
+        // ADMIN LOGIN
+        // ==================================================
+
+        document
+            .getElementById("adminLoginForm")
+            .addEventListener(
+                "submit",
+                function(event) {
+
+                    event.preventDefault();
+
+
+                    const username =
+                        document
+                            .getElementById(
+                                "adminUsername"
+                            )
+                            .value;
+
+
+                    const password =
+                        document
+                            .getElementById(
+                                "adminPassword"
+                            )
+                            .value;
+
+
+                    const message =
+                        document
+                            .getElementById(
+                                "loginMessage"
+                            );
+
+
+                    if (
+                        username === ADMIN_USERNAME &&
+                        password === ADMIN_PASSWORD
+                    ) {
+
+                        localStorage.setItem(
+                            "adminLoggedIn",
+                            "true"
+                        );
+
+
+                        document
+                            .getElementById(
+                                "adminLoginPage"
+                            )
+                            .style.display = "none";
+
+
+                        document
+                            .getElementById(
+                                "adminDashboard"
+                            )
+                            .style.display = "block";
+
+
+                        loadAdminData();
+
+                    } else {
+
+                        message.textContent =
+                            "Invalid admin username or password.";
+
+                        message.style.color = "red";
+
+                    }
+
+                }
+            );
+
+
+
+        // ==================================================
+        // LOAD ADMIN DATA
+        // ==================================================
+
+        async function loadAdminData() {
+
+            try {
+
+
+                // GET EMPLOYEES
+
+                const employeeResponse =
+                    await fetch(
+                        "http://localhost:8080/api/employees"
+                    );
+
+
+                if (!employeeResponse.ok) {
+                    throw new Error(
+                        "Could not load employees"
+                    );
+                }
+
+
+                employees =
+                    await employeeResponse.json();
+
+
+
+                // GET ATTENDANCE
+
+                const attendanceResponse =
+                    await fetch(
+                        "http://localhost:8080/api/attendance"
+                    );
+
+
+                if (!attendanceResponse.ok) {
+                    throw new Error(
+                        "Could not load attendance"
+                    );
+                }
+
+
+                attendanceRecords =
+                    await attendanceResponse.json();
+
+
+
+                // UPDATE DASHBOARD
+
+                updateStatistics();
+
+                displayEmployees();
+
+                displayAttendance();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Error loading admin data:",
+                    error
+                );
+
+
+                alert(
+                    "Could not connect to the backend."
+                );
+
+            }
+
+        }
+
+
+
+        // ==================================================
+        // GET TODAY'S DATE
+        // ==================================================
+
+        function getTodayDate() {
+
+            const now = new Date();
+
+            const year =
+                now.getFullYear();
+
+            const month =
+                String(
+                    now.getMonth() + 1
+                ).padStart(2, "0");
+
+            const day =
+                String(
+                    now.getDate()
+                ).padStart(2, "0");
+
+            return `${year}-${month}-${day}`;
+
+        }
+
+
+
+        // ==================================================
+        // UPDATE STATISTICS
+        // ==================================================
+
+        function updateStatistics() {
+
+
+            // Total employees
+
+            const totalEmployees =
+                employees.length;
+
+
+            document
+                .getElementById(
+                    "totalEmployees"
+                )
+                .textContent =
+                totalEmployees;
+
+
+
+            // Today's date
+
+            const today =
+                getTodayDate();
+
+
+
+            // Today's attendance
+
+            const todayAttendance =
+                attendanceRecords.filter(
+                    record =>
+                        record.date === today
+                );
+
+
+
+            // Present employees
+
+            const presentCount =
+                todayAttendance.filter(
+                    record =>
+                        record.status === "Present"
+                ).length;
+
+
+
+            // Late employees
+
+            const lateCount =
+                todayAttendance.filter(
+                    record =>
+                        record.status === "Late"
+                ).length;
+
+
+
+            // Total employees who attended
+
+            const attendedCount =
+                presentCount + lateCount;
+
+
+
+            // Employees who did not attend
+
+            const absentCount =
+                Math.max(
+                    totalEmployees -
+                    attendedCount,
+                    0
+                );
+
+
+
+            // Today's attendance
+
+            document
+                .getElementById(
+                    "totalAttendance"
+                )
+                .textContent =
+                attendedCount;
+
+
+
+            // Present
+
+            document
+                .getElementById(
+                    "presentRecords"
+                )
+                .textContent =
+                presentCount;
+
+
+
+            // Late
+
+            document
+                .getElementById(
+                    "lateRecords"
+                )
+                .textContent =
+                lateCount;
+
+
+
+            // Absent
+
+            document
+                .getElementById(
+                    "absentRecords"
+                )
+                .textContent =
+                absentCount;
+
+
+
+            // Attendance rate
+
+            let rate = 0;
+
+
+            if (totalEmployees > 0) {
+
+                rate =
+                    (
+                        attendedCount /
+                        totalEmployees
+                    ) * 100;
+
+            }
+
+
+            document
+                .getElementById(
+                    "attendanceRate"
+                )
+                .textContent =
+                rate.toFixed(1) + "%";
+
+        }
+
+
+
+        // ==================================================
+        // DISPLAY EMPLOYEES
+        // ==================================================
+
+        function displayEmployees(
+            employeeList = employees
+        ) {
+
+
+            const tableBody =
+                document
+                    .getElementById(
+                        "employeeTableBody"
+                    );
+
+
+            tableBody.innerHTML = "";
+
+
+
+            if (
+                employeeList.length === 0
+            ) {
+
+                tableBody.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="3"
+                            class="empty-message"
+                        >
+                            No employees found.
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+
+            }
+
+
+
+            employeeList.forEach(
+                employee => {
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${employee.id}
+                        </td>
+
+                        <td>
+                            ${employee.name}
+                        </td>
+
+                        <td>
+                            ${employee.email}
+                        </td>
+
+                    `;
+
+
+                    tableBody.appendChild(row);
+
+                }
+            );
+
+        }
+
+
+
+        // ==================================================
+        // SEARCH EMPLOYEES
+        // ==================================================
+
+        function filterEmployees() {
+
+
+            const search =
+                document
+                    .getElementById(
+                        "employeeSearch"
+                    )
+                    .value
+                    .toLowerCase();
+
+
+
+            const filtered =
+                employees.filter(
+                    employee =>
+
+                        employee.name
+                            .toLowerCase()
+                            .includes(search)
+
+                        ||
+
+                        employee.email
+                            .toLowerCase()
+                            .includes(search)
+
+                        ||
+
+                        String(
+                            employee.id
+                        )
+                            .includes(search)
+                );
+
+
+
+            displayEmployees(filtered);
+
+        }
+
+
+
+        // ==================================================
+        // DISPLAY ATTENDANCE
+        // ==================================================
+
+        function displayAttendance(
+            attendanceList = attendanceRecords
+        ) {
+
+
+            const tableBody =
+                document
+                    .getElementById(
+                        "attendanceTableBody"
+                    );
+
+
+            tableBody.innerHTML = "";
+
+
+
+            if (
+                attendanceList.length === 0
+            ) {
+
+                tableBody.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="5"
+                            class="empty-message"
+                        >
+                            No attendance records found.
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+
+            }
+
+
+
+            attendanceList.forEach(
+                record => {
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${record.id}
+                        </td>
+
+                        <td>
+                            ${record.employeeId}
+                        </td>
+
+                        <td>
+                            ${record.date}
+                        </td>
+
+                        <td>
+                            ${formatTime(record.time)}
+                        </td>
+
+                        <td>
+
+                            <span
+                                class="status ${
+                                    record.status === "Present"
+                                        ? "present"
+                                        : "late"
+                                }"
+                            >
+                                ${record.status}
+                            </span>
+
+                        </td>
+
+                    `;
+
+
+                    tableBody.appendChild(row);
+
+                }
+            );
+
+        }
+
+
+
+        // ==================================================
+        // FORMAT TIME
+        // ==================================================
+
+        function formatTime(time) {
+
+
+            if (!time) {
+                return "-";
+            }
+
+
+            const parts =
+                time.split(":");
+
+
+            const hour =
+                Number(parts[0]);
+
+
+            const minute =
+                parts[1];
+
+
+            const second =
+                parts[2];
+
+
+            const ampm =
+                hour >= 12
+                    ? "PM"
+                    : "AM";
+
+
+            const displayHour =
+                hour % 12 || 12;
+
+
+            return `${displayHour}:${minute}:${second} ${ampm}`;
+
+        }
+
+
+
+        // ==================================================
+        // FILTER ATTENDANCE
+        // ==================================================
+
+        function filterAttendance() {
+
+
+            const search =
+                document
+                    .getElementById(
+                        "attendanceSearch"
+                    )
+                    .value
+                    .toLowerCase();
+
+
+
+            const status =
+                document
+                    .getElementById(
+                        "statusFilter"
+                    )
+                    .value;
+
+
+
+            const date =
+                document
+                    .getElementById(
+                        "dateFilter"
+                    )
+                    .value;
+
+
+
+            const filtered =
+                attendanceRecords.filter(
+                    record => {
+
+
+                        // Employee search
+
+                        const matchesEmployee =
+                            String(
+                                record.employeeId
+                            )
+                                .includes(search);
+
+
+
+                        // Status filter
+
+                        const matchesStatus =
+                            status === "all"
+                            ||
+                            record.status === status;
+
+
+
+                        // Date filter
+
+                        const matchesDate =
+                            date === ""
+                            ||
+                            record.date === date;
+
+
+
+                        return (
+                            matchesEmployee &&
+                            matchesStatus &&
+                            matchesDate
+                        );
+
+                    }
+                );
+
+
+
+            displayAttendance(filtered);
+
+        }
+
+
+
+        // ==================================================
+        // EXPORT ATTENDANCE CSV
+        // ==================================================
+
+        function exportAttendance() {
+
+
+            if (
+                attendanceRecords.length === 0
+            ) {
+
+                alert(
+                    "There are no attendance records to export."
+                );
+
+                return;
+
+            }
+
+
+
+            let csv =
+                "Attendance ID,Employee ID,Date,Time,Status\n";
+
+
+
+            attendanceRecords.forEach(
+                record => {
+
+                    csv +=
+                        `${record.id},` +
+                        `${record.employeeId},` +
+                        `${record.date},` +
+                        `${record.time || ""},` +
+                        `${record.status}\n`;
+
+                }
+            );
+
+
+
+            const blob =
+                new Blob(
+                    [csv],
+                    {
+                        type: "text/csv"
+                    }
+                );
+
+
+
+            const url =
+                URL.createObjectURL(blob);
+
+
+
+            const link =
+                document.createElement("a");
+
+
+            link.href = url;
+
+
+            link.download =
+                "attendance_records.csv";
+
+
+            link.click();
+
+
+            URL.revokeObjectURL(url);
+
+        }
+
+
+
+        // ==================================================
+        // LOGOUT
+        // ==================================================
+
+        function adminLogout() {
+
+
+            localStorage.removeItem(
+                "adminLoggedIn"
+            );
+
+
+            document
+                .getElementById(
+                    "adminDashboard"
+                )
+                .style.display = "none";
+
+
+            document
+                .getElementById(
+                    "adminLoginPage"
+                )
+                .style.display = "flex";
+
+
+            document
+                .getElementById(
+                    "adminLoginForm"
+                )
+                .reset();
+
+        }
+
+
+
+        // ==================================================
+        // CHECK EXISTING ADMIN LOGIN
+        // ==================================================
+
+        window.addEventListener(
+            "load",
+            function() {
+
+
+                const loggedIn =
+                    localStorage.getItem(
+                        "adminLoggedIn"
+                    );
+
+
+                if (
+                    loggedIn === "true"
+                ) {
+
+                    document
+                        .getElementById(
+                            "adminLoginPage"
+                        )
+                        .style.display = "none";
+
+
+                    document
+                        .getElementById(
+                            "adminDashboard"
+                        )
+                        .style.display = "block";
+
+
+                    loadAdminData();
+
+                }
+
+            }
+        );
+
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+# Maven
+backend/target/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Java
+*.class
+
+# OS
+.DS_Store
+Thumbs.db

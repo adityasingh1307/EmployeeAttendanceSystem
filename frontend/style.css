@@ -1,0 +1,884 @@
+/* ==========================================================
+   Employee Attendance System
+   Look: a factory time clock. Signal yellow, ink navy,
+   Barlow (highway-sign type) with its condensed cut for
+   numbers and headings.
+   ========================================================== */
+
+:root {
+    --ink: #101b2d;
+    --ink-soft: #24344d;
+    --signal: #ffc72c;
+    --paper: #f1f3f6;
+    --surface: #ffffff;
+    --line: #d8dde5;
+    --field: #b7bfcb;
+    --text: #17202e;
+    --muted: #5b687b;
+
+    --ok: #0d704f;
+    --ok-bg: #dcf2e8;
+    --bad: #b1222b;
+    --bad-bg: #fbe2e3;
+
+    --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --font-display: "Barlow Condensed", "Arial Narrow", "Barlow", system-ui, sans-serif;
+
+    --radius-sm: 6px;
+    --radius-lg: 10px;
+
+    --wrap: 1160px;
+    --gutter: clamp(16px, 4vw, 40px);
+
+    /* faint column ruling, like a paper time card */
+    --ruling: repeating-linear-gradient(
+        90deg,
+        rgba(16, 27, 45, 0.07) 0 1px,
+        transparent 1px 72px
+    );
+
+    color-scheme: light;
+}
+
+
+/* =========================
+   BASE
+   ========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.5;
+
+    color: var(--text);
+    background: var(--paper);
+
+    -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select {
+    font: inherit;
+    color: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+:focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 3px;
+}
+
+.topbar :focus-visible {
+    outline-color: var(--signal);
+}
+
+
+/* =========================
+   BUTTONS
+   ========================= */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 40px;
+    padding: 0 16px;
+
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+
+    font-size: 0.9375rem;
+    font-weight: 600;
+    white-space: nowrap;
+
+    transition:
+        background-color 0.15s,
+        border-color 0.15s,
+        color 0.15s;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn-solid {
+    background: var(--ink);
+    color: #fff;
+}
+
+.btn-solid:hover {
+    background: var(--ink-soft);
+}
+
+.btn-outline {
+    background: var(--surface);
+    border-color: var(--field);
+    color: var(--ink);
+}
+
+.btn-outline:hover {
+    border-color: var(--ink);
+}
+
+.btn-on-dark {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+}
+
+.btn-on-dark:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.55);
+}
+
+
+/* =========================
+   CLOCK (login + employee)
+   ========================= */
+
+.clock {
+    font-family: var(--font-display);
+    font-size: clamp(6rem, 16vw, 14rem);
+    font-weight: 600;
+    line-height: 0.8;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.clock .colon {
+    animation: colon-blink 1s step-end infinite;
+}
+
+.clock .seconds {
+    margin-left: 0.14em;
+
+    font-size: 0.26em;
+    letter-spacing: 0;
+    opacity: 0.55;
+}
+
+.clock-date {
+    margin-top: 18px;
+
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+    font-weight: 500;
+    line-height: 1.1;
+}
+
+@keyframes colon-blink {
+    0%,
+    49% {
+        opacity: 1;
+    }
+    50%,
+    100% {
+        opacity: 0.15;
+    }
+}
+
+.brand-mark {
+    flex: none;
+
+    width: 44px;
+    height: 44px;
+}
+
+
+/* =========================
+   AUTH SCREENS
+   (index.html + admin login)
+   ========================= */
+
+.auth-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.auth-aside {
+    flex: 1 1 56%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: clamp(28px, 4vw, 56px);
+
+    background-color: var(--signal);
+    background-image: var(--ruling);
+    color: var(--ink);
+
+    overflow: hidden;
+}
+
+.auth-main {
+    flex: 1 1 44%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 40px clamp(24px, 5vw, 72px);
+
+    background: var(--surface);
+}
+
+.login-box {
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-box h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 4vw, 3.25rem);
+    font-weight: 700;
+    line-height: 1;
+
+    color: var(--ink);
+}
+
+.subtitle,
+.login-box > p:not([id]) {
+    margin-top: 10px;
+    margin-bottom: 32px;
+
+    color: var(--muted);
+}
+
+.login-box label {
+    display: block;
+    margin-bottom: 6px;
+
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+
+.login-box input {
+    width: 100%;
+    height: 48px;
+    margin-bottom: 20px;
+    padding: 0 14px;
+
+    border: 1px solid var(--field);
+    border-radius: var(--radius-sm);
+
+    background: #fff;
+    color: var(--text);
+
+    transition:
+        border-color 0.15s,
+        box-shadow 0.15s;
+}
+
+.login-box input::placeholder {
+    color: #8792a3;
+}
+
+.login-box input:focus,
+.controls input:focus,
+.controls select:focus {
+    outline: 2px solid transparent;
+    border-color: var(--ink);
+    box-shadow: 0 0 0 4px var(--signal);
+}
+
+.login-submit {
+    width: 100%;
+    height: 50px;
+    margin-top: 4px;
+
+    border: 0;
+    border-radius: var(--radius-sm);
+
+    background: var(--ink);
+    color: #fff;
+
+    font-size: 1.0625rem;
+    font-weight: 600;
+
+    transition: background-color 0.15s;
+}
+
+.login-submit:hover {
+    background: var(--ink-soft);
+}
+
+.login-submit:active {
+    transform: translateY(1px);
+}
+
+
+/* ---- role switch ---- */
+
+.role-selection {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+
+    margin-bottom: 28px;
+    padding: 4px;
+
+    border: 1px solid var(--line);
+    border-radius: 8px;
+
+    background: var(--paper);
+}
+
+.role-btn {
+    padding: 10px 12px;
+
+    border: 0;
+    border-radius: 5px;
+
+    background: transparent;
+    color: var(--muted);
+
+    font-weight: 600;
+
+    transition:
+        background-color 0.15s,
+        color 0.15s;
+}
+
+.role-btn:hover {
+    color: var(--ink);
+}
+
+.role-btn.active,
+.role-btn.active:hover {
+    background: var(--ink);
+    color: #fff;
+}
+
+
+/* =========================
+   TOP BAR (employee + admin)
+   ========================= */
+
+.topbar {
+    background: var(--ink);
+    color: #fff;
+}
+
+.topbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    height: 64px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-width: 0;
+
+    color: var(--signal);
+}
+
+.brand .brand-mark {
+    width: 32px;
+    height: 32px;
+}
+
+.brand h1 {
+    color: #fff;
+
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.1;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* shared page width */
+
+.topbar-inner,
+.dashboard,
+.container,
+.overview-inner {
+    width: 100%;
+    max-width: var(--wrap);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+}
+
+
+/* =========================
+   EMPLOYEE DASHBOARD
+   ========================= */
+
+.dashboard {
+    display: grid;
+    grid-template-columns: minmax(300px, 400px) 1fr;
+    gap: 24px;
+    align-items: stretch;
+
+    padding-block: 32px 56px;
+}
+
+.punch-panel {
+    display: flex;
+    flex-direction: column;
+
+    min-height: 460px;
+    padding: clamp(24px, 3vw, 32px);
+
+    border-radius: var(--radius-lg);
+
+    background-color: var(--signal);
+    background-image: var(--ruling);
+    color: var(--ink);
+}
+
+.welcome-line {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+
+    overflow-wrap: anywhere;
+}
+
+.punch-panel .clock-block {
+    margin-top: auto;
+    padding-top: 32px;
+}
+
+.punch-panel .clock {
+    font-size: clamp(5.5rem, 9vw, 7.5rem);
+}
+
+.punch-panel .clock-date {
+    font-size: 1.5rem;
+}
+
+.dashboard-buttons {
+    margin-top: 28px;
+}
+
+/* the one tactile thing on the page: a punch key */
+
+.punch-btn {
+    width: 100%;
+    padding: 18px 24px 16px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: var(--ink);
+    color: var(--signal);
+
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+
+    box-shadow: 0 5px 0 #05090f;
+
+    transition:
+        transform 0.08s,
+        box-shadow 0.08s,
+        background-color 0.15s;
+}
+
+.punch-btn:hover {
+    background: var(--ink-soft);
+}
+
+.punch-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 #05090f;
+}
+
+
+/* =========================
+   ADMIN OVERVIEW BAND
+   ========================= */
+
+#adminDashboard {
+    display: none;
+
+    min-height: 100vh;
+}
+
+.overview {
+    padding-block: clamp(28px, 4vw, 44px) clamp(20px, 3vw, 28px);
+
+    background-color: var(--signal);
+    background-image: var(--ruling);
+    color: var(--ink);
+}
+
+.welcome h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 4.5vw, 3.25rem);
+    font-weight: 700;
+    line-height: 1;
+}
+
+.welcome p {
+    margin-top: 8px;
+
+    color: rgba(16, 27, 45, 0.75);
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+
+    margin-top: 32px;
+
+    border-top: 2px solid var(--ink);
+}
+
+.stat-card {
+    padding: 18px 20px 4px;
+
+    border-left: 1px solid rgba(16, 27, 45, 0.25);
+}
+
+.stat-card:first-child {
+    padding-left: 0;
+
+    border-left: 0;
+}
+
+.stat-card h3 {
+    color: rgba(16, 27, 45, 0.75);
+
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+
+.stat-card .number {
+    margin-top: 6px;
+
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 6vw, 4.75rem);
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.container {
+    padding-block: 32px 56px;
+}
+
+
+/* =========================
+   PANELS
+   ========================= */
+
+.section,
+#attendanceSection {
+    padding: clamp(18px, 3vw, 28px);
+
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+
+    background: var(--surface);
+}
+
+.section + .section {
+    margin-top: 24px;
+}
+
+.late {
+    background: #fff1cc;
+    color: #8a5a00;
+}
+
+.section-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    margin-bottom: 20px;
+}
+
+.section-header h2,
+#attendanceSection h2 {
+    color: var(--ink);
+
+    font-family: var(--font-display);
+    font-size: 1.875rem;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+
+/* ---- controls ---- */
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.controls input,
+.controls select {
+    height: 40px;
+    padding: 0 12px;
+
+    border: 1px solid var(--field);
+    border-radius: var(--radius-sm);
+
+    background: #fff;
+    font-size: 0.9375rem;
+
+    transition:
+        border-color 0.15s,
+        box-shadow 0.15s;
+}
+
+
+/* =========================
+   TABLES
+   ========================= */
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+
+    font-variant-numeric: tabular-nums;
+}
+
+th,
+td {
+    padding: 14px;
+
+    text-align: left;
+}
+
+thead th {
+    border-bottom: 2px solid var(--ink);
+
+    color: var(--muted);
+
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+tbody td {
+    border-bottom: 1px solid var(--line);
+}
+
+tbody tr:hover td {
+    background: #f7f8fa;
+}
+
+/* empty / error rows (colspan cells) */
+
+td[colspan],
+.empty-message {
+    padding: 40px 14px;
+
+    color: var(--muted);
+    text-align: center;
+}
+
+tbody tr:hover td[colspan],
+tbody tr:hover td.empty-message {
+    background: transparent;
+}
+
+
+/* ---- status pills ---- */
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 3px 12px 3px 9px;
+
+    border-radius: 999px;
+
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.status::before {
+    content: "";
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+}
+
+.present {
+    background: var(--ok-bg);
+    color: var(--ok);
+}
+
+.absent {
+    background: var(--bad-bg);
+    color: var(--bad);
+}
+
+
+/* =========================
+   MESSAGES
+   (script.js sets inline red / green colours)
+   ========================= */
+
+#message,
+#loginMessage,
+#dashboardMessage {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: left;
+}
+
+#message:not(:empty),
+#loginMessage:not(:empty),
+#dashboardMessage:not(:empty) {
+    margin-top: 16px;
+    padding: 12px 14px;
+
+    border-left: 4px solid currentColor;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+
+    background: var(--paper);
+
+    animation: notice-in 0.25s ease-out;
+}
+
+#dashboardMessage:not(:empty) {
+    background: #fff;
+}
+
+#message[style*="red"],
+#loginMessage[style*="red"],
+#dashboardMessage[style*="red"] {
+    color: var(--bad) !important;
+}
+
+#message[style*="green"],
+#loginMessage[style*="green"],
+#dashboardMessage[style*="green"] {
+    color: var(--ok) !important;
+}
+
+@keyframes notice-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 860px) {
+
+    .auth-shell {
+        flex-direction: column;
+    }
+
+    .auth-aside {
+        flex: none;
+        gap: 32px;
+
+        padding: 24px var(--gutter) 28px;
+    }
+
+    .auth-aside .clock {
+        font-size: clamp(4.5rem, 22vw, 7rem);
+    }
+
+    .auth-main {
+        flex: 1;
+        align-items: flex-start;
+
+        padding-block: 36px 48px;
+    }
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .punch-panel {
+        min-height: 0;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stat-card:nth-child(odd) {
+        padding-left: 0;
+
+        border-left: 0;
+    }
+
+    .stat-card:nth-child(n + 3) {
+        margin-top: 14px;
+
+        border-top: 1px solid rgba(16, 27, 45, 0.25);
+    }
+
+}
+
+@media (max-width: 520px) {
+
+    .brand h1 {
+        font-size: 1.25rem;
+    }
+
+    .controls {
+        width: 100%;
+    }
+
+    .controls > * {
+        flex: 1 1 140px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+
+}
