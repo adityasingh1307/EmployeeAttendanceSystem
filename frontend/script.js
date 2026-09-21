@@ -309,6 +309,11 @@ async function markAttendance() {
             );
 
 
+        if (!response.ok) {
+            throw new Error("Request failed");
+        }
+
+
         const result =
             await response.json();
 
@@ -319,11 +324,9 @@ async function markAttendance() {
         );
 
 
-        message.textContent =
-            "Attendance marked successfully!";
+        // Disable the button for the rest of the day
 
-        message.style.color =
-            "green";
+        lockMarkButton(result);
 
 
     } catch (error) {
@@ -341,6 +344,128 @@ async function markAttendance() {
             "red";
 
     }
+
+}
+
+
+
+// ==================================================
+// DISABLE MARK BUTTON ONCE MARKED TODAY
+// ==================================================
+
+function getTodayDate() {
+
+    const now = new Date();
+
+    const year = now.getFullYear();
+
+    const month =
+        String(now.getMonth() + 1).padStart(2, "0");
+
+    const day =
+        String(now.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+
+}
+
+
+function lockMarkButton(record) {
+
+    const button =
+        document.querySelector(".punch-btn");
+
+    const message =
+        document.getElementById("dashboardMessage");
+
+    if (!button) {
+        return;
+    }
+
+    button.disabled = true;
+
+    button.textContent = "Attendance Marked";
+
+    message.textContent =
+        "Attendance marked for today" +
+        (record && record.status
+            ? " (" + record.status + ")."
+            : ".");
+
+    message.style.color = "green";
+
+}
+
+
+function unlockMarkButton() {
+
+    const button =
+        document.querySelector(".punch-btn");
+
+    if (!button || !button.disabled) {
+        return;
+    }
+
+    button.disabled = false;
+
+    button.textContent = "Mark Attendance";
+
+    document.getElementById("dashboardMessage")
+        .textContent = "";
+
+}
+
+
+async function checkTodayAttendance() {
+
+    const employeeId =
+        localStorage.getItem("employeeId");
+
+    if (!employeeId) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                `http://localhost:8080/api/attendance/${employeeId}`
+            );
+
+        const records =
+            await response.json();
+
+        const todayRecord =
+            Array.isArray(records)
+                ? records.find(
+                    record =>
+                        record.date === getTodayDate()
+                )
+                : null;
+
+        if (todayRecord) {
+            lockMarkButton(todayRecord);
+        } else {
+            unlockMarkButton();
+        }
+
+    } catch (error) {
+
+        console.error("Error:", error);
+
+    }
+
+}
+
+
+// Employee dashboard only: check on load, then every minute
+// (so the button unlocks by itself on the next day)
+
+if (document.querySelector(".punch-btn")) {
+
+    checkTodayAttendance();
+
+    setInterval(checkTodayAttendance, 60000);
 
 }
 

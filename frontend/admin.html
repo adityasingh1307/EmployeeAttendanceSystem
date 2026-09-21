@@ -433,8 +433,8 @@
 
                 <div class="section-header">
 
-                    <h2>
-                        Attendance Records
+                    <h2 id="attendanceTitle">
+                        Today's Attendance
                     </h2>
 
 
@@ -471,6 +471,7 @@
                         <input
                             type="date"
                             id="dateFilter"
+                            style="display: none;"
                             onchange="filterAttendance()"
                         >
 
@@ -484,10 +485,19 @@
 
 
                         <button
+                            class="btn btn-outline"
+                            id="previousBtn"
+                            onclick="togglePreviousDays()"
+                        >
+                            Previous Days
+                        </button>
+
+
+                        <button
                             class="btn btn-solid export-btn"
                             onclick="exportAttendance()"
                         >
-                            Export CSV
+                            Export Excel
                         </button>
 
                     </div>
@@ -546,6 +556,8 @@
     </div>
 
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <script src="clock.js"></script>
 
 
@@ -574,6 +586,9 @@
         let employees = [];
 
         let attendanceRecords = [];
+
+        // false = show today only, true = show previous days only
+        let showPrevious = false;
 
 
 
@@ -709,7 +724,7 @@
 
                 displayEmployees();
 
-                displayAttendance();
+                filterAttendance();
 
 
             } catch (error) {
@@ -1209,9 +1224,23 @@
 
 
 
+            const today =
+                getTodayDate();
+
+
+
             const filtered =
                 attendanceRecords.filter(
                     record => {
+
+
+                        // Today only / previous days only
+
+                        const matchesView =
+                            showPrevious
+                                ? record.date < today
+                                : record.date === today;
+
 
 
                         // Employee search
@@ -1243,6 +1272,7 @@
 
 
                         return (
+                            matchesView &&
                             matchesEmployee &&
                             matchesStatus &&
                             matchesDate
@@ -1253,14 +1283,73 @@
 
 
 
-            displayAttendance(filtered);
+            displayAttendance(
+                sortRecords(filtered)
+            );
 
         }
 
 
 
         // ==================================================
-        // EXPORT ATTENDANCE CSV
+        // SORT RECORDS (newest first)
+        // ==================================================
+
+        function sortRecords(list) {
+
+            return [...list].sort(
+                (a, b) =>
+                    String(b.date).localeCompare(String(a.date))
+                    ||
+                    String(b.time).localeCompare(String(a.time))
+            );
+
+        }
+
+
+
+        // ==================================================
+        // TODAY / PREVIOUS DAYS TOGGLE
+        // ==================================================
+
+        function togglePreviousDays() {
+
+            showPrevious = !showPrevious;
+
+
+            document
+                .getElementById("attendanceTitle")
+                .textContent =
+                showPrevious
+                    ? "Previous Days Attendance"
+                    : "Today's Attendance";
+
+
+            document
+                .getElementById("previousBtn")
+                .textContent =
+                showPrevious
+                    ? "Back to Today"
+                    : "Previous Days";
+
+
+            const dateInput =
+                document.getElementById("dateFilter");
+
+            dateInput.value = "";
+
+            dateInput.style.display =
+                showPrevious ? "" : "none";
+
+
+            filterAttendance();
+
+        }
+
+
+
+        // ==================================================
+        // EXPORT ATTENDANCE (EXCEL)
         // ==================================================
 
         function exportAttendance() {
@@ -1279,57 +1368,79 @@
             }
 
 
+            if (typeof XLSX === "undefined") {
 
-            let csv =
-                "Attendance ID,Employee ID,Date,Time,Status\n";
+                alert(
+                    "Excel library could not load. Check your internet connection."
+                );
+
+                return;
+
+            }
 
 
 
-            attendanceRecords.forEach(
+            const rows = [
+                [
+                    "Attendance ID",
+                    "Employee ID",
+                    "Date",
+                    "Time",
+                    "Status"
+                ]
+            ];
+
+
+            sortRecords(attendanceRecords).forEach(
                 record => {
 
-                    csv +=
-                        `${record.id},` +
-                        `${record.employeeId},` +
-                        `${record.date},` +
-                        `${record.time || ""},` +
-                        `${record.status}\n`;
+                    rows.push([
+                        record.id,
+                        record.employeeId,
+                        String(record.date),
+                        formatTime(
+                            String(record.time || "")
+                                .split(".")[0]
+                        ),
+                        record.status
+                    ]);
 
                 }
             );
 
 
 
-            const blob =
-                new Blob(
-                    [csv],
-                    {
-                        type: "text/csv"
-                    }
-                );
+            const sheet =
+                XLSX.utils.aoa_to_sheet(rows);
 
 
+            // Wide enough columns so the date is always visible
 
-            const url =
-                URL.createObjectURL(blob);
-
-
-
-            const link =
-                document.createElement("a");
-
-
-            link.href = url;
+            sheet["!cols"] = [
+                { wch: 15 },
+                { wch: 13 },
+                { wch: 14 },
+                { wch: 14 },
+                { wch: 10 }
+            ];
 
 
-            link.download =
-                "attendance_records.csv";
+            const book =
+                XLSX.utils.book_new();
+
+            XLSX.utils.book_append_sheet(
+                book,
+                sheet,
+                "Attendance"
+            );
 
 
-            link.click();
-
-
-            URL.revokeObjectURL(url);
+            XLSX.writeFile(
+                book,
+                "attendance_report_" +
+                getTodayDate() +
+                ".xlsx"
+            );
 
         }
 

@@ -28,10 +28,13 @@ public class AttendanceCleanup {
                         ZoneId.of("Asia/Kolkata")
                 );
 
-        attendanceRepository.deleteByDateBefore(today);
+        // Previous days are kept (not deleted) so the admin
+        // can view them from the "Previous Days" button.
+        // Each day starts fresh because the admin table only
+        // shows records where date = today.
 
         System.out.println(
-                "Attendance reset completed for "
+                "New attendance day started: "
                         + today
         );
     }
